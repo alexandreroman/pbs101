@@ -1,0 +1,9 @@
+name: dev-team
+registries:
+- registry: harbor.fqdn.com
+  username: user
+  password: changeme
+repositories:
+- domain: github.com
+  username: alexandreroman
+  password: accesstoken
