@@ -2,7 +2,7 @@ team: dev-team
 source:
   git:
     url: https://github.com/alexandreroman/spring-on-k8s.git
-    revision: testing
+    revision: master
 build:
   env:
   # Set Java version: default is 11.*.

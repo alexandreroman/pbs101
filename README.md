@@ -11,30 +11,51 @@ You need a Pivotal Build Service installation, up and running.
 Make sure you first run `pb api set http://yourpbs.fqdn.com`
 and `pb login` to target your Pivotal Build Service instance.
 
-Create file `team.yml` using `team.yml.template`, and set your parameters:
-```yaml
-# Choose a name for this team configuration.
-name: dev-team
-registries:
-# Set your Docker registry FQDN.
-- registry: harbor.fqdn.com
-  # Set Docker registry credentials.
-  username: user
-  password: changeme
-repositories:
-# Set Git repository credentials.
-- domain: github.com
-  username: alexandreroman
-  password: accesstoken
+Create a team:
+```bash
+$ pb team create dev-team
+Successfully created team 'dev-team'
 ```
 
-This file defines credentials that you will use for several apps built
-by Pivotal Build Service.
-
-Deploy this team configuration using this command:
+Add an user to this team:
 ```bash
-$ pb team apply -f team.yml
-Successfully applied team 'dev-team'
+$ pb team user add uaa_user@fqdn.com -t dev-team
+```
+
+Use an user defined in your UAA configuration.
+
+Create file `registry-creds.yml` using `registry-creds.yml.template`, and set your parameters:
+```yaml
+team: dev-team
+registry: harbor.fqdn.com
+username: registry-user
+password: registry-password
+```
+
+This file defines image registry credentials that Pivotal Build Service will use when
+an app is being built for your team.
+
+Deploy these credentials using this command:
+```bash
+$ pb secrets registry apply -f registry-creds.yml
+Successfully created registry secret for 'harbor.fqdn.com' in team 'dev-team'
+```
+
+Create file `git-creds.yml` using `git-creds.yml.template`, and set your parameters:
+```yaml
+team: dev-team
+repository: github.com
+username: github-user
+password: github-access-token
+```
+
+Just like with image egistry credentials, this file defines how to access source
+code for your team.
+
+Deploy these credentials using this command:
+```bash
+$ pb secrets git apply -f git-creds.yml
+Successfully created git secret for 'github.com' in team 'dev-team'
 ```
 
 Create file `app.yml` using `app.yml.template`, and set your parameters:
@@ -42,18 +63,26 @@ Create file `app.yml` using `app.yml.template`, and set your parameters:
 team: dev-team
 source:
   git:
-    # Set your Git repository.
     url: https://github.com/alexandreroman/spring-on-k8s.git
-    # Revision can be a tag, a branch or a SHA-1 commit id.
-    revision: testing
+    # Set a revision to build: a branch, a tag or a SHA-1 commit id
+    revision: master
 build:
   env:
   # Set Java version: default is 11.*.
   - name: BP_JAVA_VERSION
     value: 8.*
 image:
-  # Set resulting image tag.
   tag: harbor.fqdn.com/myrepo/spring-on-k8s
+```
+
+Create as many app definitions you need: Pivotal Build Service will then
+monitor source code updates and a Docker image will automatically be deployed
+to the image registry.
+
+Deploy this app definition using this command:
+```bash
+$ pb image apply -f app.yml
+Successfully applied image configuration 'harbor.fqdn.com/myrepo/spring-on-k8s'
 ```
 
 You need to define one such file for each app you want to manage with

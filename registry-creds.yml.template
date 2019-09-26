@@ -1,0 +1,4 @@
+team: dev-team
+registry: harbor.fqdn.com
+username: registry-user
+password: registry-password
