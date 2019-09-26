@@ -49,7 +49,7 @@ username: github-user
 password: github-access-token
 ```
 
-Just like with image egistry credentials, this file defines how to access source
+Just like with image registry credentials, this file defines how to access source
 code for your team.
 
 Deploy these credentials using this command:
@@ -75,20 +75,11 @@ image:
   tag: harbor.fqdn.com/myrepo/spring-on-k8s
 ```
 
-Create as many app definitions you need: Pivotal Build Service will then
+Create as many app definitions as you need: Pivotal Build Service will then
 monitor source code updates and a Docker image will automatically be deployed
 to the image registry.
 
 Deploy this app definition using this command:
-```bash
-$ pb image apply -f app.yml
-Successfully applied image configuration 'harbor.fqdn.com/myrepo/spring-on-k8s'
-```
-
-You need to define one such file for each app you want to manage with
-Pivotal Build Service.
-
-Run this command to deploy the app configuration:
 ```bash
 $ pb image apply -f app.yml
 Successfully applied image configuration 'harbor.fqdn.com/myrepo/spring-on-k8s'
